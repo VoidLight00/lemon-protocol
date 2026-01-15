@@ -70,6 +70,42 @@ export default function DashboardPage() {
     router.refresh();
   };
 
+  const handleDeleteResult = async (resultId: string) => {
+    if (!confirm('이 테스트 결과를 삭제하시겠습니까?')) return;
+
+    const supabase = getSupabase();
+    const { error } = await supabase
+      .from('test_results')
+      .delete()
+      .eq('id', resultId);
+
+    if (!error) {
+      setServerResults(serverResults.filter(r => r.id !== resultId));
+    } else {
+      alert('삭제 중 오류가 발생했습니다.');
+    }
+  };
+
+  const handleDeleteAllResults = async () => {
+    if (!confirm('모든 테스트 결과를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) return;
+
+    const supabase = getSupabase();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+
+    if (!authUser) return;
+
+    const { error } = await supabase
+      .from('test_results')
+      .delete()
+      .eq('user_id', authUser.id);
+
+    if (!error) {
+      setServerResults([]);
+    } else {
+      alert('삭제 중 오류가 발생했습니다.');
+    }
+  };
+
   // 표시할 결과 (서버 결과 우선, 없으면 로컬)
   const results: TestResult[] = serverResults.length > 0 ? serverResults : localResults;
 
@@ -204,33 +240,59 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
           ) : (
-            <div className="space-y-3">
-              {results.map((result) => (
-                <Card key={result.id}>
-                  <CardContent className="py-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">{result.result_emoji}</span>
-                        <div>
-                          <p className="font-medium">{result.test_title}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {result.result_title}
-                          </p>
+            <>
+              {/* 전체 삭제 버튼 */}
+              {user && results.length > 0 && (
+                <div className="flex justify-end">
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={handleDeleteAllResults}
+                  >
+                    전체 삭제
+                  </Button>
+                </div>
+              )}
+              <div className="space-y-3">
+                {results.map((result) => (
+                  <Card key={result.id}>
+                    <CardContent className="py-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">{result.result_emoji}</span>
+                          <div>
+                            <p className="font-medium">{result.test_title}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {result.result_title}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="text-right">
+                            <p className="text-sm text-muted-foreground">
+                              {format(new Date(result.created_at), 'yyyy.MM.dd HH:mm', { locale: ko })}
+                            </p>
+                            {result.total_score !== undefined && (
+                              <Badge variant="outline">점수: {result.total_score}</Badge>
+                            )}
+                          </div>
+                          {user && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteResult(result.id)}
+                              className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                            >
+                              🗑️
+                            </Button>
+                          )}
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-sm text-muted-foreground">
-                          {format(new Date(result.created_at), 'yyyy.MM.dd HH:mm', { locale: ko })}
-                        </p>
-                        {result.total_score !== undefined && (
-                          <Badge variant="outline">점수: {result.total_score}</Badge>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </>
           )}
         </TabsContent>
 
