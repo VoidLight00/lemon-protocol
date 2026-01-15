@@ -1,0 +1,325 @@
+/* Design V2 - Lemon Protocol New Design System */
+
+/* ===== Color Palette ===== */
+:root {
+  /* Primary Lemon Colors */
+  --lemon-50: #FEFCE8;
+  --lemon-100: #FEF9C3;
+  --lemon-200: #FEF08A;
+  --lemon-300: #FDE047;
+  --lemon-400: #FACC15;
+  --lemon-500: #EAB308;
+  --lemon-600: #CA8A04;
+  --lemon-700: #A16207;
+  --lemon-800: #854D0E;
+  --lemon-900: #713F12;
+
+  /* Fresh Mint Accent */
+  --mint-50: #F0FDF4;
+  --mint-100: #DCFCE7;
+  --mint-200: #BBF7D0;
+  --mint-300: #86EFAC;
+  --mint-400: #4ADE80;
+  --mint-500: #22C55E;
+
+  /* Coral Pink Accent (for emotions/love) */
+  --coral-50: #FFF1F2;
+  --coral-100: #FFE4E6;
+  --coral-200: #FECDD3;
+  --coral-300: #FDA4AF;
+  --coral-400: #FB7185;
+  --coral-500: #F43F5E;
+
+  /* Deep Navy (for contrast text) */
+  --navy-800: #1E293B;
+  --navy-900: #0F172A;
+
+  /* Background gradients */
+  --gradient-lemon: linear-gradient(135deg, var(--lemon-100) 0%, var(--lemon-200) 50%, var(--lemon-300) 100%);
+  --gradient-fresh: linear-gradient(135deg, var(--mint-100) 0%, var(--lemon-100) 100%);
+  --gradient-sunset: linear-gradient(135deg, var(--coral-100) 0%, var(--lemon-200) 100%);
+}
+
+/* ===== Animations ===== */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes bounce-slow {
+  0%, 100% {
+    transform: translateY(0px);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(-15px);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 5px rgba(250, 204, 21, 0.5));
+  }
+  50% {
+    filter: drop-shadow(0 0 20px rgba(250, 204, 21, 0.8));
+  }
+}
+
+@keyframes slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-right {
+  0% {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes squish {
+  0%, 100% {
+    transform: scaleX(1) scaleY(1);
+  }
+  50% {
+    transform: scaleX(1.1) scaleY(0.9);
+  }
+}
+
+@keyframes sour-shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-2px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(2px);
+  }
+}
+
+/* Animation Classes */
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 2s ease-in-out infinite;
+}
+
+.animate-wiggle {
+  animation: wiggle 0.5s ease-in-out;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.6s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.6s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.4s ease-out forwards;
+}
+
+.animate-squish {
+  animation: squish 0.3s ease-in-out;
+}
+
+.animate-sour-shake {
+  animation: sour-shake 0.5s ease-in-out;
+}
+
+/* Stagger Animation Delays */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+
+/* ===== Typography ===== */
+.text-gradient-lemon {
+  background: linear-gradient(135deg, var(--lemon-500) 0%, var(--lemon-600) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-fresh {
+  background: linear-gradient(135deg, var(--mint-500) 0%, var(--lemon-500) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===== Glass Effect ===== */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-dark {
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ===== Card Styles ===== */
+.card-v2 {
+  background: white;
+  border-radius: 24px;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 10px 15px -3px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.card-v2:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.08),
+    0 20px 25px -5px rgba(0, 0, 0, 0.08);
+}
+
+.card-v2-lemon {
+  background: linear-gradient(135deg, var(--lemon-50) 0%, white 100%);
+}
+
+/* ===== Button Styles ===== */
+.btn-v2 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  font-weight: 600;
+  border-radius: 16px;
+  transition: all 0.2s ease;
+}
+
+.btn-v2-primary {
+  background: linear-gradient(135deg, var(--lemon-400) 0%, var(--lemon-500) 100%);
+  color: var(--navy-900);
+  box-shadow: 0 4px 14px rgba(234, 179, 8, 0.4);
+}
+
+.btn-v2-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(234, 179, 8, 0.5);
+}
+
+.btn-v2-primary:active {
+  transform: translateY(0);
+}
+
+.btn-v2-secondary {
+  background: white;
+  color: var(--navy-800);
+  border: 2px solid var(--lemon-300);
+}
+
+.btn-v2-secondary:hover {
+  background: var(--lemon-50);
+  border-color: var(--lemon-400);
+}
+
+/* ===== Input Styles ===== */
+.input-v2 {
+  padding: 14px 20px;
+  border: 2px solid #E5E7EB;
+  border-radius: 16px;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.input-v2:focus {
+  outline: none;
+  border-color: var(--lemon-400);
+  box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.15);
+}
+
+/* ===== Badge Styles ===== */
+.badge-v2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 20px;
+}
+
+.badge-v2-lemon {
+  background: var(--lemon-100);
+  color: var(--lemon-800);
+}
+
+.badge-v2-mint {
+  background: var(--mint-100);
+  color: var(--mint-500);
+}
+
+.badge-v2-coral {
+  background: var(--coral-100);
+  color: var(--coral-500);
+}
