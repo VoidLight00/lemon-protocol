@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { LemonCharacter } from '@/components/design-v2/characters/lemon-character';
+import { LemonCharacterPro } from '@/components/design-v2/characters/lemon-character-pro';
 import { SplashIntro } from '@/components/design-v2/animations/splash-intro';
 import { LandingHero, ConceptSection, FeaturesSection, CTASection } from '@/components/design-v2/landing/landing-hero';
 import {
@@ -13,6 +14,14 @@ import {
   CTAProfessional,
   FooterProfessional,
 } from '@/components/design-v2/landing/landing-professional';
+import {
+  HeroPremium,
+  ConceptPremium,
+  FeaturesPremium,
+  TestimonialsPremium,
+  CTAPremium,
+  FooterPremium,
+} from '@/components/design-v2/landing/landing-premium';
 import {
   IconChat,
   IconHeart,
@@ -32,15 +41,17 @@ import {
 } from '@/components/design-v2/icons/geometric-icons';
 import '@/components/design-v2/design-v2.css';
 
-type PreviewTab = 'characters' | 'landing' | 'landing-pro' | 'splash' | 'components' | 'icons';
+type PreviewTab = 'characters' | 'characters-pro' | 'landing' | 'landing-pro' | 'landing-premium' | 'splash' | 'components' | 'icons';
 
 export default function DesignPreviewPage() {
-  const [activeTab, setActiveTab] = useState<PreviewTab>('characters');
+  const [activeTab, setActiveTab] = useState<PreviewTab>('landing-premium');
   const [showSplash, setShowSplash] = useState(false);
 
   const tabs: { id: PreviewTab; label: string }[] = [
-    { id: 'characters', label: '캐릭터' },
+    { id: 'landing-premium', label: '랜딩 (Premium)' },
+    { id: 'characters-pro', label: '캐릭터 Pro' },
     { id: 'landing-pro', label: '랜딩 (Pro)' },
+    { id: 'characters', label: '캐릭터' },
     { id: 'landing', label: '랜딩 (V1)' },
     { id: 'icons', label: '아이콘' },
     { id: 'splash', label: '스플래시' },
@@ -95,6 +106,8 @@ export default function DesignPreviewPage() {
 
       {/* Content */}
       <main>
+        {activeTab === 'landing-premium' && <LandingPremiumPreview />}
+        {activeTab === 'characters-pro' && <CharactersProPreview />}
         {activeTab === 'characters' && <CharactersPreview />}
         {activeTab === 'landing-pro' && <LandingProPreview />}
         {activeTab === 'landing' && <LandingPreview />}
@@ -174,6 +187,19 @@ function LandingPreview() {
   );
 }
 
+function LandingPremiumPreview() {
+  return (
+    <div className="bg-white">
+      <HeroPremium />
+      <ConceptPremium />
+      <FeaturesPremium />
+      <TestimonialsPremium />
+      <CTAPremium />
+      <FooterPremium />
+    </div>
+  );
+}
+
 function LandingProPreview() {
   return (
     <div className="bg-white">
@@ -184,6 +210,79 @@ function LandingProPreview() {
       <TestimonialsSection />
       <CTAProfessional />
       <FooterProfessional />
+    </div>
+  );
+}
+
+function CharactersProPreview() {
+  const expressions = ['neutral', 'happy', 'sour', 'thinking', 'love', 'sad', 'determined', 'wink'] as const;
+  const sizes = ['sm', 'md', 'lg', 'xl', '2xl', '3xl'] as const;
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <section className="mb-12">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Pro Character</h2>
+        <p className="text-gray-600 mb-6">더욱 정교한 그라디언트와 디테일이 적용된 프로페셔널 캐릭터</p>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-6">
+          {expressions.map((expression) => (
+            <div key={expression} className="flex flex-col items-center gap-3 p-4 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-shadow">
+              <LemonCharacterPro expression={expression} size="lg" showGlow />
+              <span className="text-sm font-medium text-gray-600 capitalize">{expression}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mb-12">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">크기 (Sizes)</h2>
+        <div className="flex items-end gap-6 p-6 bg-white rounded-2xl shadow-sm flex-wrap">
+          {sizes.map((size) => (
+            <div key={size} className="flex flex-col items-center gap-2">
+              <LemonCharacterPro expression="happy" size={size} showGlow />
+              <span className="text-sm font-medium text-gray-600">{size}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mb-12">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">글로우 효과 비교</h2>
+        <div className="flex gap-12 p-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl">
+          <div className="flex flex-col items-center gap-3">
+            <LemonCharacterPro expression="love" size="xl" showGlow={false} />
+            <span className="text-sm font-medium text-gray-600">Normal</span>
+          </div>
+          <div className="flex flex-col items-center gap-3">
+            <LemonCharacterPro expression="love" size="xl" showGlow={true} />
+            <span className="text-sm font-medium text-gray-600">With Glow</span>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">애니메이션 조합</h2>
+        <div className="flex gap-8 p-6 bg-white rounded-2xl shadow-sm flex-wrap">
+          <div className="flex flex-col items-center gap-2">
+            <div className="animate-float">
+              <LemonCharacterPro expression="happy" size="xl" showGlow />
+            </div>
+            <span className="text-sm font-medium text-gray-600">Float + Glow</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <div className="animate-bounce-slow">
+              <LemonCharacterPro expression="love" size="xl" showGlow />
+            </div>
+            <span className="text-sm font-medium text-gray-600">Bounce + Glow</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <div className="animate-pulse-glow">
+              <LemonCharacterPro expression="determined" size="xl" showGlow />
+            </div>
+            <span className="text-sm font-medium text-gray-600">Pulse + Glow</span>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
