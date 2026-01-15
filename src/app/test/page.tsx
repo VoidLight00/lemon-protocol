@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -15,6 +16,9 @@ import {
   type AttachmentResult,
   type GottmanResult,
 } from '@/lib/diagnostics';
+import { getSupabase } from '@/lib/supabase/client';
+import { useTestResultsStore } from '@/stores/test-results-store';
+import type { TestResult as DBTestResult } from '@/types/database';
 
 type TestResult = DiagnosticResult | AttachmentResult | GottmanResult;
 
@@ -24,6 +28,21 @@ export default function TestPage() {
   const [answers, setAnswers] = useState<{ questionId: string; value: number; category?: string }[]>([]);
   const [showResult, setShowResult] = useState(false);
   const [result, setResult] = useState<TestResult | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  const { addLocalResult } = useTestResultsStore();
+
+  // 유저 확인
+  useEffect(() => {
+    const checkUser = async () => {
+      const supabase = getSupabase();
+      const { data: { user } } = await supabase.auth.getUser();
+      setUserId(user?.id || null);
+    };
+    checkUser();
+  }, []);
 
   const handleStartTest = (test: DiagnosticTest) => {
     setSelectedTest(test);
@@ -31,16 +50,27 @@ export default function TestPage() {
     setAnswers([]);
     setShowResult(false);
     setResult(null);
+    setIsSaved(false);
   };
 
   const handleAnswer = (value: number) => {
     if (!selectedTest) return;
 
     const question = selectedTest.questions[currentQuestion];
-    const newAnswers = [
-      ...answers,
-      { questionId: question.id, value, category: question.category },
-    ];
+
+    // 기존 답변이 있으면 업데이트, 없으면 추가
+    const existingIndex = answers.findIndex(a => a.questionId === question.id);
+    let newAnswers;
+
+    if (existingIndex >= 0) {
+      newAnswers = [...answers];
+      newAnswers[existingIndex] = { questionId: question.id, value, category: question.category };
+    } else {
+      newAnswers = [
+        ...answers,
+        { questionId: question.id, value, category: question.category },
+      ];
+    }
     setAnswers(newAnswers);
 
     if (currentQuestion < selectedTest.questions.length - 1) {
@@ -49,6 +79,34 @@ export default function TestPage() {
       // 테스트 완료 - 결과 계산
       calculateResult(newAnswers);
     }
+  };
+
+  const handlePrevious = () => {
+    if (currentQuestion > 0) {
+      setCurrentQuestion(currentQuestion - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (!selectedTest) return;
+
+    // 현재 질문에 답변이 있는 경우에만 다음으로 이동
+    const question = selectedTest.questions[currentQuestion];
+    const hasAnswer = answers.some(a => a.questionId === question.id);
+
+    if (hasAnswer && currentQuestion < selectedTest.questions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+    } else if (hasAnswer && currentQuestion === selectedTest.questions.length - 1) {
+      // 마지막 질문이면 결과 계산
+      calculateResult(answers);
+    }
+  };
+
+  // 현재 질문의 선택된 답변 가져오기
+  const getCurrentAnswer = () => {
+    if (!selectedTest) return null;
+    const question = selectedTest.questions[currentQuestion];
+    return answers.find(a => a.questionId === question.id)?.value ?? null;
   };
 
   const calculateResult = (allAnswers: { questionId: string; value: number; category?: string }[]) => {
@@ -99,23 +157,93 @@ export default function TestPage() {
     setShowResult(true);
   };
 
+  // 결과 저장 함수
+  const saveResult = async () => {
+    if (!selectedTest || !result || isSaved) return;
+
+    setIsSaving(true);
+
+    // DB에 저장할 데이터 구성
+    const dbResult: Omit<DBTestResult, 'id' | 'created_at' | 'user_id'> = {
+      test_id: selectedTest.id,
+      test_title: selectedTest.title,
+      result_type: result.type || '',
+      result_title: result.title,
+      result_emoji: result.emoji,
+      tips: result.tips,
+    };
+
+    // 점수 정보 추가
+    if ('totalScore' in result) {
+      dbResult.total_score = result.totalScore;
+    }
+    if ('scores' in result) {
+      dbResult.category_scores = result.scores;
+    }
+    if ('anxietyScore' in result && 'avoidanceScore' in result) {
+      dbResult.dimension_scores = {
+        anxiety: result.anxietyScore,
+        avoidance: result.avoidanceScore,
+      };
+    }
+
+    try {
+      if (userId) {
+        // 로그인 사용자: Supabase에 저장
+        const supabase = getSupabase();
+        const { error } = await supabase
+          .from('test_results')
+          .insert({
+            ...dbResult,
+            user_id: userId,
+          });
+
+        if (error) {
+          console.error('Save error:', error);
+          // 실패시 로컬에 저장
+          addLocalResult(dbResult);
+        }
+      } else {
+        // 비로그인 사용자: 로컬 스토어에 저장
+        addLocalResult(dbResult);
+      }
+
+      setIsSaved(true);
+    } catch (err) {
+      console.error('Save error:', err);
+      // 실패시 로컬에 저장
+      addLocalResult(dbResult);
+      setIsSaved(true);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const resetTest = () => {
     setSelectedTest(null);
     setCurrentQuestion(0);
     setAnswers([]);
     setShowResult(false);
     setResult(null);
+    setIsSaved(false);
   };
 
   // Test Selection
   if (!selectedTest) {
     return (
       <div className="container max-w-4xl py-8 px-4">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold mb-2">관계 진단 테스트</h1>
-          <p className="text-muted-foreground">
-            심리학 연구에서 검증된 테스트로 나와 상대방의 관계 패턴을 이해해보세요.
-          </p>
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-2xl font-bold mb-2">관계 진단 테스트</h1>
+            <p className="text-muted-foreground">
+              심리학 연구에서 검증된 테스트로 나와 상대방의 관계 패턴을 이해해보세요.
+            </p>
+          </div>
+          <Link href="/dashboard">
+            <Button variant="outline" size="sm">
+              📊 내 결과
+            </Button>
+          </Link>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
@@ -154,7 +282,7 @@ export default function TestPage() {
             <p>• 결과는 참고용이며, 전문적인 진단을 대체하지 않습니다</p>
             <p>• 파트너와 함께 테스트하면 서로를 더 잘 이해할 수 있어요</p>
             <p>• 결과를 챗봇에 공유하면 맞춤형 조언을 받을 수 있습니다</p>
-            <p>• 모든 테스트는 심리학 연구에서 검증된 척도를 기반으로 합니다</p>
+            <p>• {userId ? '✓ 로그인됨 - 결과가 자동 저장됩니다' : '로그인하면 결과가 저장됩니다'}</p>
           </CardContent>
         </Card>
       </div>
@@ -196,10 +324,10 @@ export default function TestPage() {
                       <div className="flex-1 bg-background rounded-full h-2">
                         <div
                           className="bg-yellow-500 h-2 rounded-full"
-                          style={{ width: `${(result.anxietyScore / 42) * 100}%` }}
+                          style={{ width: `${(result.anxietyScore / 126) * 100}%` }}
                         />
                       </div>
-                      <span className="font-medium">{result.anxietyScore}/42</span>
+                      <span className="font-medium">{result.anxietyScore}/126</span>
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
                       {result.anxietyLevel === 'high' ? '높음 - 버림받을까 걱정' : '낮음 - 안정적'}
@@ -211,10 +339,10 @@ export default function TestPage() {
                       <div className="flex-1 bg-background rounded-full h-2">
                         <div
                           className="bg-blue-500 h-2 rounded-full"
-                          style={{ width: `${(result.avoidanceScore / 42) * 100}%` }}
+                          style={{ width: `${(result.avoidanceScore / 126) * 100}%` }}
                         />
                       </div>
-                      <span className="font-medium">{result.avoidanceScore}/42</span>
+                      <span className="font-medium">{result.avoidanceScore}/126</span>
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
                       {result.avoidanceLevel === 'high' ? '높음 - 친밀감 불편' : '낮음 - 친밀감 편안'}
@@ -235,10 +363,10 @@ export default function TestPage() {
                       <div className="w-20 bg-background rounded-full h-2">
                         <div
                           className="bg-red-400 h-2 rounded-full"
-                          style={{ width: `${(result.scores.criticism / 15) * 100}%` }}
+                          style={{ width: `${(result.scores.criticism / 25) * 100}%` }}
                         />
                       </div>
-                      <span className="w-8 text-right">{result.scores.criticism}/15</span>
+                      <span className="w-8 text-right">{result.scores.criticism}/25</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
@@ -247,10 +375,10 @@ export default function TestPage() {
                       <div className="w-20 bg-background rounded-full h-2">
                         <div
                           className="bg-red-500 h-2 rounded-full"
-                          style={{ width: `${(result.scores.contempt / 15) * 100}%` }}
+                          style={{ width: `${(result.scores.contempt / 25) * 100}%` }}
                         />
                       </div>
-                      <span className="w-8 text-right">{result.scores.contempt}/15</span>
+                      <span className="w-8 text-right">{result.scores.contempt}/25</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
@@ -259,10 +387,10 @@ export default function TestPage() {
                       <div className="w-20 bg-background rounded-full h-2">
                         <div
                           className="bg-orange-400 h-2 rounded-full"
-                          style={{ width: `${(result.scores.defensiveness / 15) * 100}%` }}
+                          style={{ width: `${(result.scores.defensiveness / 25) * 100}%` }}
                         />
                       </div>
-                      <span className="w-8 text-right">{result.scores.defensiveness}/15</span>
+                      <span className="w-8 text-right">{result.scores.defensiveness}/25</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
@@ -271,15 +399,15 @@ export default function TestPage() {
                       <div className="w-20 bg-background rounded-full h-2">
                         <div
                           className="bg-gray-500 h-2 rounded-full"
-                          style={{ width: `${(result.scores.stonewalling / 15) * 100}%` }}
+                          style={{ width: `${(result.scores.stonewalling / 25) * 100}%` }}
                         />
                       </div>
-                      <span className="w-8 text-right">{result.scores.stonewalling}/15</span>
+                      <span className="w-8 text-right">{result.scores.stonewalling}/25</span>
                     </div>
                   </div>
                 </div>
                 <p className="text-xs text-muted-foreground mt-2">
-                  주요 개선 영역: <strong>{result.mainIssue}</strong> | 총점: {result.totalScore}/60
+                  주요 개선 영역: <strong>{result.mainIssue}</strong> | 총점: {result.totalScore}/100
                 </p>
               </div>
             )}
@@ -294,14 +422,29 @@ export default function TestPage() {
               </ul>
             </div>
 
+            {/* 결과 저장 버튼 */}
+            <Button
+              onClick={saveResult}
+              disabled={isSaving || isSaved}
+              className="w-full"
+              variant={isSaved ? 'outline' : 'default'}
+            >
+              {isSaving ? '저장 중...' : isSaved ? '✓ 저장됨' : '💾 결과 저장하기'}
+            </Button>
+
             {/* 버튼들 */}
             <div className="flex gap-2">
               <Button onClick={resetTest} variant="outline" className="flex-1">
                 다른 테스트
               </Button>
-              <Button onClick={() => handleStartTest(selectedTest)} className="flex-1">
+              <Button onClick={() => handleStartTest(selectedTest)} variant="outline" className="flex-1">
                 다시 하기
               </Button>
+              <Link href="/dashboard" className="flex-1">
+                <Button variant="outline" className="w-full">
+                  📊 내 결과
+                </Button>
+              </Link>
             </div>
 
             {/* 챗봇 연동 안내 */}
@@ -345,16 +488,47 @@ export default function TestPage() {
           <p className="text-lg font-medium">{question.text}</p>
 
           <div className="space-y-2">
-            {question.options.map((option, i) => (
-              <Button
-                key={i}
-                variant="outline"
-                className="w-full justify-start text-left h-auto py-3 px-4"
-                onClick={() => handleAnswer(option.value)}
-              >
-                {option.text}
-              </Button>
-            ))}
+            {question.options.map((option, i) => {
+              const isSelected = getCurrentAnswer() === option.value;
+              return (
+                <Button
+                  key={i}
+                  variant={isSelected ? "default" : "outline"}
+                  className={`w-full justify-start text-left h-auto py-3 px-4 ${isSelected ? 'ring-2 ring-primary' : ''}`}
+                  onClick={() => handleAnswer(option.value)}
+                >
+                  {isSelected && <span className="mr-2">✓</span>}
+                  {option.text}
+                </Button>
+              );
+            })}
+          </div>
+
+          {/* 이전/다음 네비게이션 버튼 */}
+          <div className="flex items-center justify-between pt-4 border-t">
+            <Button
+              variant="outline"
+              onClick={handlePrevious}
+              disabled={currentQuestion === 0}
+              className="flex items-center gap-2"
+            >
+              <span>←</span>
+              <span>이전</span>
+            </Button>
+
+            <span className="text-sm text-muted-foreground">
+              {currentQuestion + 1} / {selectedTest.questions.length}
+            </span>
+
+            <Button
+              variant="outline"
+              onClick={handleNext}
+              disabled={getCurrentAnswer() === null}
+              className="flex items-center gap-2"
+            >
+              <span>{currentQuestion === selectedTest.questions.length - 1 ? '완료' : '다음'}</span>
+              <span>→</span>
+            </Button>
           </div>
         </CardContent>
       </Card>

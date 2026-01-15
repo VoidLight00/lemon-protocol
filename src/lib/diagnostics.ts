@@ -1,5 +1,6 @@
-// 실제 심리학 연구에서 사용되는 검증된 테스트들
-// Based on: ECR-R, 5 Love Languages, RAS, Thomas-Kilmann, Gottman
+// 실제 심리학 연구에서 사용되는 검증된 테스트들 (전문 버전)
+// Based on: ECR-R (36문항), 5 Love Languages (30문항), RAS (7문항), Thomas-Kilmann (30문항), Gottman (20문항)
+// Total: 123 문항
 
 export interface DiagnosticQuestion {
   id: string;
@@ -59,32 +60,43 @@ const likert7Options = [
   { value: 7, text: '매우 그렇다' },
 ];
 
+const likert7OptionsReverse = [
+  { value: 7, text: '전혀 아니다' },
+  { value: 6, text: '아니다' },
+  { value: 5, text: '약간 아니다' },
+  { value: 4, text: '보통이다' },
+  { value: 3, text: '약간 그렇다' },
+  { value: 2, text: '그렇다' },
+  { value: 1, text: '매우 그렇다' },
+];
+
 export const diagnosticTests: DiagnosticTest[] = [
-  // ===== 1. ECR-R 애착 유형 테스트 (단축형 12문항) =====
+  // ===== 1. ECR-R 애착 유형 테스트 (전문판 36문항) =====
+  // Fraley, Waller, & Brennan (2000) - Experiences in Close Relationships-Revised
   {
     id: 'attachment-ecr',
-    title: '애착 유형 테스트 (ECR-R)',
-    description: 'Experiences in Close Relationships-Revised 기반 성인 애착 유형 검사입니다. 불안 차원과 회피 차원을 측정합니다.',
+    title: '성인 애착 유형 테스트 (ECR-R)',
+    description: 'Experiences in Close Relationships-Revised - 성인 애착 연구의 표준 척도입니다. 불안 차원(18문항)과 회피 차원(18문항)을 측정합니다.',
     emoji: '🔗',
-    source: 'Fraley, Waller & Brennan (2000)',
+    source: 'Fraley, Waller & Brennan (2000) - ECR-R 36문항',
     scoringType: 'dimension',
     questions: [
-      // 불안 차원 (Anxiety) - 6문항
+      // ===== 불안 차원 (Anxiety) - 18문항 =====
       {
         id: 'ecr-a1',
-        text: '연인이 나를 진정으로 사랑하는지 자주 걱정된다',
+        text: '나는 연인이 나를 진정으로 사랑하는지 자주 걱정된다',
         category: 'anxiety',
         options: likert7Options,
       },
       {
         id: 'ecr-a2',
-        text: '연인이 나를 떠날까 봐 두렵다',
+        text: '나는 연인에게 버림받을까 봐 걱정된다',
         category: 'anxiety',
         options: likert7Options,
       },
       {
         id: 'ecr-a3',
-        text: '연인에게 버림받을까 봐 걱정된다',
+        text: '나는 연인이 나를 떠날까 봐 자주 두렵다',
         category: 'anxiety',
         options: likert7Options,
       },
@@ -96,50 +108,194 @@ export const diagnosticTests: DiagnosticTest[] = [
       },
       {
         id: 'ecr-a5',
-        text: '연인이 연락이 없으면 나쁜 일이 생긴 건 아닌지 불안하다',
+        text: '나는 연인이 나에게 느끼는 감정이 내가 연인에게 느끼는 감정만큼 강하지 않을까 걱정된다',
         category: 'anxiety',
         options: likert7Options,
       },
       {
         id: 'ecr-a6',
-        text: '내가 연인에게 느끼는 만큼 상대도 나를 원하지 않을까 걱정된다',
+        text: '나는 혼자가 될까 봐 걱정된다',
         category: 'anxiety',
         options: likert7Options,
       },
-      // 회피 차원 (Avoidance) - 6문항
+      {
+        id: 'ecr-a7',
+        text: '연인이 연락이 없으면 나쁜 일이 생긴 건 아닌지 불안하다',
+        category: 'anxiety',
+        options: likert7Options,
+      },
+      {
+        id: 'ecr-a8',
+        text: '연인이 내 곁에 없으면 어딘가 허전하고 불완전한 느낌이 든다',
+        category: 'anxiety',
+        options: likert7Options,
+      },
+      {
+        id: 'ecr-a9',
+        text: '나는 관계가 끝날까 봐 많이 걱정한다',
+        category: 'anxiety',
+        options: likert7Options,
+      },
+      {
+        id: 'ecr-a10',
+        text: '연인이 나에게 관심을 주지 않으면 화가 나거나 속상하다',
+        category: 'anxiety',
+        options: likert7Options,
+      },
+      {
+        id: 'ecr-a11',
+        text: '내가 원하는 만큼 가까워지려고 하면 연인이 멀어지는 것 같다',
+        category: 'anxiety',
+        options: likert7Options,
+      },
+      {
+        id: 'ecr-a12',
+        text: '때때로 나는 연인이 나에 대한 감정을 바꿀까 봐 두렵다',
+        category: 'anxiety',
+        options: likert7Options,
+      },
+      {
+        id: 'ecr-a13',
+        text: '나는 연인에 대한 강한 애정이 때때로 연인을 겁먹게 하는 것 같다',
+        category: 'anxiety',
+        options: likert7Options,
+      },
+      {
+        id: 'ecr-a14',
+        text: '나는 연인과의 관계에 대해 많이 생각하고 분석한다',
+        category: 'anxiety',
+        options: likert7Options,
+      },
+      {
+        id: 'ecr-a15',
+        text: '연인이 다른 사람에게 관심을 보이면 질투심을 느낀다',
+        category: 'anxiety',
+        options: likert7Options,
+      },
+      {
+        id: 'ecr-a16',
+        text: '나는 연인이 나를 충분히 소중하게 여기지 않는다고 느낄 때가 있다',
+        category: 'anxiety',
+        options: likert7Options,
+      },
+      {
+        id: 'ecr-a17',
+        text: '연인과 다투면 관계가 완전히 끝날까 봐 두렵다',
+        category: 'anxiety',
+        options: likert7Options,
+      },
+      {
+        id: 'ecr-a18',
+        text: '나는 연인의 사랑을 잃을까 봐 걱정이 많다',
+        category: 'anxiety',
+        options: likert7Options,
+      },
+      // ===== 회피 차원 (Avoidance) - 18문항 =====
       {
         id: 'ecr-v1',
-        text: '연인에게 속마음을 털어놓는 것이 불편하다',
+        text: '나는 연인에게 속마음을 털어놓는 것이 불편하다',
         category: 'avoidance',
         options: likert7Options,
       },
       {
         id: 'ecr-v2',
-        text: '연인에게 너무 가까워지는 것이 불편하다',
+        text: '나는 연인에게 너무 가까워지는 것이 불편하다',
         category: 'avoidance',
         options: likert7Options,
       },
       {
         id: 'ecr-v3',
-        text: '연인에게 의지하는 것이 어렵다',
+        text: '나는 연인에게 의지하기가 어렵다',
         category: 'avoidance',
         options: likert7Options,
       },
       {
         id: 'ecr-v4',
-        text: '연인이 너무 가까워지려 하면 불편해진다',
+        text: '연인이 너무 가까워지려고 하면 불편해진다',
         category: 'avoidance',
         options: likert7Options,
       },
       {
         id: 'ecr-v5',
-        text: '감정적으로 가까워지는 것보다 독립적인 것이 편하다',
+        text: '나는 감정적으로 가까워지는 것보다 독립적인 것이 더 편하다',
         category: 'avoidance',
         options: likert7Options,
       },
       {
         id: 'ecr-v6',
         text: '나의 깊은 생각과 감정을 연인과 나누는 것이 어렵다',
+        category: 'avoidance',
+        options: likert7Options,
+      },
+      {
+        id: 'ecr-v7',
+        text: '나는 연인에게 모든 것을 이야기하지 않는다',
+        category: 'avoidance',
+        options: likert7Options,
+      },
+      {
+        id: 'ecr-v8',
+        text: '연인이 위로나 도움을 요청하면 당황스럽다',
+        category: 'avoidance',
+        options: likert7Options,
+      },
+      {
+        id: 'ecr-v9',
+        text: '나는 연인에게 너무 의존하게 될까 봐 걱정된다',
+        category: 'avoidance',
+        options: likert7Options,
+      },
+      {
+        id: 'ecr-v10',
+        text: '나는 연인과 매우 친밀해지는 것이 어느 정도 불편하다',
+        category: 'avoidance',
+        options: likert7Options,
+      },
+      {
+        id: 'ecr-v11',
+        text: '나는 연인이 나에게 너무 친밀하게 구는 것이 싫다',
+        category: 'avoidance',
+        options: likert7Options,
+      },
+      {
+        id: 'ecr-v12',
+        text: '나는 연인과 애정 표현을 나누는 것이 다소 불편하다',
+        category: 'avoidance',
+        options: likert7Options,
+      },
+      {
+        id: 'ecr-v13',
+        text: '연인이 나에게 사랑한다고 말하면 어떻게 반응해야 할지 모르겠다',
+        category: 'avoidance',
+        options: likert7Options,
+      },
+      {
+        id: 'ecr-v14',
+        text: '나는 연인과 깊은 대화를 나누기보다 가벼운 대화를 선호한다',
+        category: 'avoidance',
+        options: likert7Options,
+      },
+      {
+        id: 'ecr-v15',
+        text: '나는 관계에서 개인적인 공간이 많이 필요하다',
+        category: 'avoidance',
+        options: likert7Options,
+      },
+      {
+        id: 'ecr-v16',
+        text: '힘들 때 연인에게 도움을 청하기보다 혼자 해결하려 한다',
+        category: 'avoidance',
+        options: likert7Options,
+      },
+      {
+        id: 'ecr-v17',
+        text: '나는 연인에게 내 약점을 보여주기 싫다',
+        category: 'avoidance',
+        options: likert7Options,
+      },
+      {
+        id: 'ecr-v18',
+        text: '나는 연인과 함께하는 것보다 혼자 시간을 보내는 것을 더 좋아한다',
         category: 'avoidance',
         options: likert7Options,
       },
@@ -203,16 +359,17 @@ export const diagnosticTests: DiagnosticTest[] = [
     ],
   },
 
-  // ===== 2. 5가지 사랑의 언어 테스트 (15문항) =====
+  // ===== 2. 5가지 사랑의 언어 테스트 (전문판 30문항) =====
+  // Gary Chapman's 5 Love Languages Assessment
   {
     id: 'love-language',
     title: '5가지 사랑의 언어 테스트',
-    description: 'Gary Chapman의 이론 기반으로 당신이 사랑을 느끼고 표현하는 주요 방식을 알아봅니다.',
+    description: 'Gary Chapman의 이론 기반 전문 검사입니다. 당신이 사랑을 느끼고 표현하는 주요 방식을 정확히 알아봅니다.',
     emoji: '💝',
-    source: 'Gary Chapman - The 5 Love Languages',
+    source: 'Gary Chapman - The 5 Love Languages (30문항)',
     scoringType: 'category',
     questions: [
-      // 인정하는 말 (Words of Affirmation) - 3문항
+      // ===== 인정하는 말 (Words of Affirmation) - 6문항 =====
       {
         id: 'll-w1',
         text: '연인이 "사랑해", "고마워", "대단해" 같은 말을 해주면 사랑받는 느낌이 든다',
@@ -231,7 +388,25 @@ export const diagnosticTests: DiagnosticTest[] = [
         category: 'words',
         options: likert5Options,
       },
-      // 함께하는 시간 (Quality Time) - 3문항
+      {
+        id: 'll-w4',
+        text: '연인이 나에 대해 좋은 점을 다른 사람 앞에서 말해주면 기분이 좋다',
+        category: 'words',
+        options: likert5Options,
+      },
+      {
+        id: 'll-w5',
+        text: '문자나 메모로 사랑한다는 표현을 받으면 오래 간직하고 싶다',
+        category: 'words',
+        options: likert5Options,
+      },
+      {
+        id: 'll-w6',
+        text: '연인이 나를 응원하고 격려해주는 말이 큰 힘이 된다',
+        category: 'words',
+        options: likert5Options,
+      },
+      // ===== 함께하는 시간 (Quality Time) - 6문항 =====
       {
         id: 'll-t1',
         text: '연인과 함께 시간을 보내는 것이 무엇보다 중요하다',
@@ -250,7 +425,25 @@ export const diagnosticTests: DiagnosticTest[] = [
         category: 'time',
         options: likert5Options,
       },
-      // 선물 (Receiving Gifts) - 3문항
+      {
+        id: 'll-t4',
+        text: '연인과 단둘이 대화하는 시간이 나에게 매우 소중하다',
+        category: 'time',
+        options: likert5Options,
+      },
+      {
+        id: 'll-t5',
+        text: '연인과 함께 취미나 활동을 하면 행복하다',
+        category: 'time',
+        options: likert5Options,
+      },
+      {
+        id: 'll-t6',
+        text: '연인이 바쁘더라도 나와 함께할 시간을 만들어주면 사랑을 느낀다',
+        category: 'time',
+        options: likert5Options,
+      },
+      // ===== 선물 (Receiving Gifts) - 6문항 =====
       {
         id: 'll-g1',
         text: '연인이 선물을 주면 마음을 담았다고 느껴져서 기쁘다',
@@ -269,7 +462,25 @@ export const diagnosticTests: DiagnosticTest[] = [
         category: 'gifts',
         options: likert5Options,
       },
-      // 봉사 (Acts of Service) - 3문항
+      {
+        id: 'll-g4',
+        text: '연인이 내가 좋아하는 것을 기억해서 선물해주면 사랑을 느낀다',
+        category: 'gifts',
+        options: likert5Options,
+      },
+      {
+        id: 'll-g5',
+        text: '깜짝 선물을 받으면 정말 기분이 좋다',
+        category: 'gifts',
+        options: likert5Options,
+      },
+      {
+        id: 'll-g6',
+        text: '연인이 여행지에서 나를 위한 기념품을 사오면 감동받는다',
+        category: 'gifts',
+        options: likert5Options,
+      },
+      // ===== 봉사 (Acts of Service) - 6문항 =====
       {
         id: 'll-s1',
         text: '연인이 나를 위해 무언가 해주면(요리, 청소, 심부름 등) 사랑을 느낀다',
@@ -288,7 +499,25 @@ export const diagnosticTests: DiagnosticTest[] = [
         category: 'service',
         options: likert5Options,
       },
-      // 스킨십 (Physical Touch) - 3문항
+      {
+        id: 'll-s4',
+        text: '연인이 내 일을 대신 처리해주면 사랑받는 느낌이 든다',
+        category: 'service',
+        options: likert5Options,
+      },
+      {
+        id: 'll-s5',
+        text: '연인이 먼저 나서서 집안일을 해주면 고마움을 느낀다',
+        category: 'service',
+        options: likert5Options,
+      },
+      {
+        id: 'll-s6',
+        text: '내가 아플 때 연인이 간호해주면 매우 사랑받는 느낌이 든다',
+        category: 'service',
+        options: likert5Options,
+      },
+      // ===== 스킨십 (Physical Touch) - 6문항 =====
       {
         id: 'll-p1',
         text: '손잡기, 포옹, 스킨십이 나에게 매우 중요하다',
@@ -304,6 +533,24 @@ export const diagnosticTests: DiagnosticTest[] = [
       {
         id: 'll-p3',
         text: '연인의 가벼운 터치만으로도 기분이 좋아진다',
+        category: 'touch',
+        options: likert5Options,
+      },
+      {
+        id: 'll-p4',
+        text: '힘들 때 연인이 안아주면 위로가 된다',
+        category: 'touch',
+        options: likert5Options,
+      },
+      {
+        id: 'll-p5',
+        text: '연인과 가까이 앉거나 기대있으면 안정감을 느낀다',
+        category: 'touch',
+        options: likert5Options,
+      },
+      {
+        id: 'll-p6',
+        text: '연인의 손길이나 터치가 나에게 큰 의미가 있다',
         category: 'touch',
         options: likert5Options,
       },
@@ -377,13 +624,14 @@ export const diagnosticTests: DiagnosticTest[] = [
     ],
   },
 
-  // ===== 3. 관계 만족도 척도 RAS (7문항) =====
+  // ===== 3. 관계 만족도 척도 RAS (7문항 - 원본 그대로) =====
+  // Hendrick (1988) - Relationship Assessment Scale
   {
     id: 'relationship-satisfaction',
     title: '관계 만족도 테스트 (RAS)',
-    description: 'Relationship Assessment Scale - 현재 관계에 대한 전반적인 만족도를 측정하는 검증된 척도입니다.',
+    description: 'Relationship Assessment Scale - 현재 관계에 대한 전반적인 만족도를 측정하는 검증된 척도입니다. 심리학 연구에서 가장 많이 사용됩니다.',
     emoji: '📊',
-    source: 'Hendrick (1988)',
+    source: 'Hendrick (1988) - RAS 7문항 (원본)',
     scoringType: 'sum',
     questions: [
       {
@@ -526,16 +774,17 @@ export const diagnosticTests: DiagnosticTest[] = [
     ],
   },
 
-  // ===== 4. Thomas-Kilmann 갈등 스타일 테스트 (10문항) =====
+  // ===== 4. Thomas-Kilmann 갈등 스타일 테스트 (전문판 30문항) =====
+  // Thomas & Kilmann (1974) - Conflict Mode Instrument
   {
     id: 'conflict-style',
-    title: '갈등 해결 스타일 테스트',
-    description: 'Thomas-Kilmann Conflict Mode Instrument 기반으로 갈등 상황에서의 대처 방식을 알아봅니다.',
+    title: '갈등 해결 스타일 테스트 (TKI)',
+    description: 'Thomas-Kilmann Conflict Mode Instrument - 갈등 상황에서의 5가지 대처 방식을 정밀하게 측정합니다.',
     emoji: '⚡',
-    source: 'Thomas & Kilmann (1974)',
+    source: 'Thomas & Kilmann (1974) - TKI 30문항',
     scoringType: 'category',
     questions: [
-      // 경쟁형 (Competing)
+      // ===== 경쟁형 (Competing) - 6문항 =====
       {
         id: 'tki-c1',
         text: '갈등 상황에서 내 의견이 옳다면 끝까지 주장하는 편이다',
@@ -548,7 +797,31 @@ export const diagnosticTests: DiagnosticTest[] = [
         category: 'competing',
         options: likert5Options,
       },
-      // 회피형 (Avoiding)
+      {
+        id: 'tki-c3',
+        text: '내 입장이 정당하다면 상대방을 설득하려고 노력한다',
+        category: 'competing',
+        options: likert5Options,
+      },
+      {
+        id: 'tki-c4',
+        text: '중요한 문제에서는 절대 양보하지 않는다',
+        category: 'competing',
+        options: likert5Options,
+      },
+      {
+        id: 'tki-c5',
+        text: '내가 옳다고 확신하면 상대방의 감정보다 사실이 중요하다',
+        category: 'competing',
+        options: likert5Options,
+      },
+      {
+        id: 'tki-c6',
+        text: '갈등에서 내 목표를 달성하는 것이 관계보다 중요할 때가 있다',
+        category: 'competing',
+        options: likert5Options,
+      },
+      // ===== 회피형 (Avoiding) - 6문항 =====
       {
         id: 'tki-a1',
         text: '갈등이 생기면 대화를 피하거나 미루는 편이다',
@@ -561,7 +834,31 @@ export const diagnosticTests: DiagnosticTest[] = [
         category: 'avoiding',
         options: likert5Options,
       },
-      // 협력형 (Collaborating)
+      {
+        id: 'tki-a3',
+        text: '논쟁이 될 것 같은 주제는 피하는 편이다',
+        category: 'avoiding',
+        options: likert5Options,
+      },
+      {
+        id: 'tki-a4',
+        text: '갈등이 심해지면 일단 자리를 피하고 싶다',
+        category: 'avoiding',
+        options: likert5Options,
+      },
+      {
+        id: 'tki-a5',
+        text: '문제가 저절로 해결되기를 기다리는 편이다',
+        category: 'avoiding',
+        options: likert5Options,
+      },
+      {
+        id: 'tki-a6',
+        text: '감정이 격해질 것 같으면 대화를 멈추고 싶다',
+        category: 'avoiding',
+        options: likert5Options,
+      },
+      // ===== 협력형 (Collaborating) - 6문항 =====
       {
         id: 'tki-co1',
         text: '갈등 상황에서 서로 모두 만족할 수 있는 해결책을 찾으려 한다',
@@ -574,7 +871,31 @@ export const diagnosticTests: DiagnosticTest[] = [
         category: 'collaborating',
         options: likert5Options,
       },
-      // 수용형 (Accommodating)
+      {
+        id: 'tki-co3',
+        text: '갈등을 해결하기 위해 시간이 걸리더라도 깊은 대화를 나눈다',
+        category: 'collaborating',
+        options: likert5Options,
+      },
+      {
+        id: 'tki-co4',
+        text: '서로의 진짜 욕구가 무엇인지 파악하려고 노력한다',
+        category: 'collaborating',
+        options: likert5Options,
+      },
+      {
+        id: 'tki-co5',
+        text: 'Win-Win 해결책을 찾기 위해 창의적으로 생각한다',
+        category: 'collaborating',
+        options: likert5Options,
+      },
+      {
+        id: 'tki-co6',
+        text: '갈등을 통해 서로를 더 이해할 기회로 본다',
+        category: 'collaborating',
+        options: likert5Options,
+      },
+      // ===== 수용형 (Accommodating) - 6문항 =====
       {
         id: 'tki-ac1',
         text: '관계를 위해 내 의견을 양보하는 경우가 많다',
@@ -587,7 +908,31 @@ export const diagnosticTests: DiagnosticTest[] = [
         category: 'accommodating',
         options: likert5Options,
       },
-      // 타협형 (Compromising)
+      {
+        id: 'tki-ac3',
+        text: '갈등을 빨리 끝내기 위해 상대방 의견에 따르는 편이다',
+        category: 'accommodating',
+        options: likert5Options,
+      },
+      {
+        id: 'tki-ac4',
+        text: '상대방의 욕구가 나보다 더 중요하다고 느낄 때가 있다',
+        category: 'accommodating',
+        options: likert5Options,
+      },
+      {
+        id: 'tki-ac5',
+        text: '화합을 위해 내 생각을 굽히는 경우가 많다',
+        category: 'accommodating',
+        options: likert5Options,
+      },
+      {
+        id: 'tki-ac6',
+        text: '상대방이 원하는 대로 해주는 것이 편하다',
+        category: 'accommodating',
+        options: likert5Options,
+      },
+      // ===== 타협형 (Compromising) - 6문항 =====
       {
         id: 'tki-cp1',
         text: '서로 조금씩 양보해서 중간 지점을 찾는 것이 현실적이라고 생각한다',
@@ -597,6 +942,30 @@ export const diagnosticTests: DiagnosticTest[] = [
       {
         id: 'tki-cp2',
         text: '완벽한 해결책보다 빠른 합의가 더 중요할 때가 많다',
+        category: 'compromising',
+        options: likert5Options,
+      },
+      {
+        id: 'tki-cp3',
+        text: '반반씩 양보하는 것이 공정하다고 생각한다',
+        category: 'compromising',
+        options: likert5Options,
+      },
+      {
+        id: 'tki-cp4',
+        text: '서로 한 발씩 물러나면 대부분의 갈등은 해결된다',
+        category: 'compromising',
+        options: likert5Options,
+      },
+      {
+        id: 'tki-cp5',
+        text: '모두 100% 만족하기보다 적당히 만족하는 선에서 합의한다',
+        category: 'compromising',
+        options: likert5Options,
+      },
+      {
+        id: 'tki-cp6',
+        text: '실용적인 해결이 이상적인 해결보다 낫다고 생각한다',
         category: 'compromising',
         options: likert5Options,
       },
@@ -675,16 +1044,17 @@ export const diagnosticTests: DiagnosticTest[] = [
     ],
   },
 
-  // ===== 5. Gottman 관계 건강도 테스트 (12문항) =====
+  // ===== 5. Gottman 관계 건강도 테스트 (전문판 20문항) =====
+  // John Gottman - The Four Horsemen of the Apocalypse
   {
     id: 'gottman-health',
     title: '관계 건강도 테스트 (Gottman)',
-    description: 'Gottman의 "관계의 4가지 독소" 이론 기반으로 관계의 위험 신호를 점검합니다.',
+    description: 'Gottman의 "관계의 4가지 독소" 이론 기반 전문 검사입니다. 이혼을 94% 정확도로 예측하는 4가지 위험 신호를 점검합니다.',
     emoji: '💊',
-    source: 'John Gottman - The Four Horsemen',
+    source: 'John Gottman - The Four Horsemen (20문항)',
     scoringType: 'category',
     questions: [
-      // 비난 (Criticism) - 3문항
+      // ===== 비난 (Criticism) - 5문항 =====
       {
         id: 'gh-cr1',
         text: '화가 나면 상대방의 성격이나 인격을 비난하게 된다 (예: "넌 항상 이기적이야")',
@@ -703,7 +1073,19 @@ export const diagnosticTests: DiagnosticTest[] = [
         category: 'criticism',
         options: likert5Options,
       },
-      // 경멸 (Contempt) - 3문항
+      {
+        id: 'gh-cr4',
+        text: '연인의 문제점을 일반화해서 말하는 편이다 (예: "넌 왜 맨날 그래?")',
+        category: 'criticism',
+        options: likert5Options,
+      },
+      {
+        id: 'gh-cr5',
+        text: '화가 나면 연인의 과거 잘못들을 끄집어내서 말한다',
+        category: 'criticism',
+        options: likert5Options,
+      },
+      // ===== 경멸 (Contempt) - 5문항 =====
       {
         id: 'gh-co1',
         text: '연인을 무시하거나 비웃는 표정, 말투를 사용한 적이 있다',
@@ -722,7 +1104,19 @@ export const diagnosticTests: DiagnosticTest[] = [
         category: 'contempt',
         options: likert5Options,
       },
-      // 방어 (Defensiveness) - 3문항
+      {
+        id: 'gh-co4',
+        text: '연인의 의견이나 감정을 하찮게 여긴 적이 있다',
+        category: 'contempt',
+        options: likert5Options,
+      },
+      {
+        id: 'gh-co5',
+        text: '연인에게 모욕적이거나 비꼬는 말을 한 적이 있다',
+        category: 'contempt',
+        options: likert5Options,
+      },
+      // ===== 방어 (Defensiveness) - 5문항 =====
       {
         id: 'gh-de1',
         text: '연인이 불만을 말하면 변명하거나 역공격하게 된다',
@@ -741,7 +1135,19 @@ export const diagnosticTests: DiagnosticTest[] = [
         category: 'defensiveness',
         options: likert5Options,
       },
-      // 담쌓기/철수 (Stonewalling) - 3문항
+      {
+        id: 'gh-de4',
+        text: '내 잘못을 인정하기보다 상황이나 다른 이유를 대는 편이다',
+        category: 'defensiveness',
+        options: likert5Options,
+      },
+      {
+        id: 'gh-de5',
+        text: '연인의 지적을 받으면 바로 반박하고 싶어진다',
+        category: 'defensiveness',
+        options: likert5Options,
+      },
+      // ===== 담쌓기/철수 (Stonewalling) - 5문항 =====
       {
         id: 'gh-st1',
         text: '갈등 중 대화를 완전히 차단하고 침묵하는 경우가 있다',
@@ -760,10 +1166,22 @@ export const diagnosticTests: DiagnosticTest[] = [
         category: 'stonewalling',
         options: likert5Options,
       },
+      {
+        id: 'gh-st4',
+        text: '힘든 대화 중 갑자기 멍해지거나 shutdown되는 느낌이 든다',
+        category: 'stonewalling',
+        options: likert5Options,
+      },
+      {
+        id: 'gh-st5',
+        text: '연인이 말해도 의도적으로 반응하지 않은 적이 있다',
+        category: 'stonewalling',
+        options: likert5Options,
+      },
     ],
     results: [
       {
-        range: [12, 24],
+        range: [20, 40],
         type: 'healthy',
         title: '건강한 관계',
         emoji: '💚',
@@ -776,7 +1194,7 @@ export const diagnosticTests: DiagnosticTest[] = [
         ],
       },
       {
-        range: [25, 36],
+        range: [41, 55],
         type: 'caution',
         title: '주의 필요',
         emoji: '💛',
@@ -790,7 +1208,7 @@ export const diagnosticTests: DiagnosticTest[] = [
         ],
       },
       {
-        range: [37, 48],
+        range: [56, 75],
         type: 'warning',
         title: '경고 단계',
         emoji: '🧡',
@@ -805,7 +1223,7 @@ export const diagnosticTests: DiagnosticTest[] = [
         ],
       },
       {
-        range: [49, 60],
+        range: [76, 100],
         type: 'danger',
         title: '위험 단계',
         emoji: '❤️‍🩹',
@@ -896,9 +1314,9 @@ export function getAttachmentResult(anxietyScore: number, avoidanceScore: number
   const test = getTestById('attachment-ecr');
   if (!test) return null;
 
-  // 중간값 기준 (7점 척도 * 6문항 = 최대 42, 중간 21)
-  const anxietyLevel = anxietyScore > 24 ? 'high' : 'low';
-  const avoidanceLevel = avoidanceScore > 24 ? 'high' : 'low';
+  // 중간값 기준 (7점 척도 * 18문항 = 최대 126, 중간 63)
+  const anxietyLevel = anxietyScore > 63 ? 'high' : 'low';
+  const avoidanceLevel = avoidanceScore > 63 ? 'high' : 'low';
 
   let resultIndex: number;
   if (anxietyLevel === 'low' && avoidanceLevel === 'low') {

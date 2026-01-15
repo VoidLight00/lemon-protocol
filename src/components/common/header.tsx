@@ -1,13 +1,36 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useThemeStore } from '@/stores/theme-store';
+import { getSupabase } from '@/lib/supabase/client';
+import type { User } from '@supabase/supabase-js';
 
 export function Header() {
   const pathname = usePathname();
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const supabase = getSupabase();
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+      setIsLoading(false);
+    };
+    checkUser();
+
+    // 인증 상태 변화 구독
+    const supabase = getSupabase();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -31,11 +54,30 @@ export function Header() {
           <NavLink href="/test" active={pathname.startsWith('/test')}>
             진단
           </NavLink>
+          <NavLink href="/dashboard" active={pathname.startsWith('/dashboard')}>
+            대시보드
+          </NavLink>
         </nav>
 
         {/* Actions */}
         <div className="flex items-center gap-2">
           <ThemeToggle />
+          {!isLoading && (
+            user ? (
+              <Link href="/dashboard">
+                <Button variant="ghost" size="icon" className="h-9 w-9">
+                  <UserIcon />
+                  <span className="sr-only">내 정보</span>
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/auth/login">
+                <Button variant="outline" size="sm" className="h-9">
+                  로그인
+                </Button>
+              </Link>
+            )
+          )}
           <Link href="/settings">
             <Button variant="ghost" size="icon" className="h-9 w-9">
               <SettingsIcon />
@@ -170,6 +212,24 @@ function MonitorIcon({ className }: { className?: string }) {
       <rect width="20" height="14" x="2" y="3" rx="2" />
       <line x1="8" x2="16" y1="21" y2="21" />
       <line x1="12" x2="12" y1="17" y2="21" />
+    </svg>
+  );
+}
+
+function UserIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-4 w-4"
+    >
+      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
     </svg>
   );
 }
