@@ -4,9 +4,35 @@ import { useState } from 'react';
 import { LemonCharacter } from '@/components/design-v2/characters/lemon-character';
 import { SplashIntro } from '@/components/design-v2/animations/splash-intro';
 import { LandingHero, ConceptSection, FeaturesSection, CTASection } from '@/components/design-v2/landing/landing-hero';
+import {
+  HeroProfessional,
+  PhilosophySection,
+  FeaturesSection as FeaturesPro,
+  SocialProofSection,
+  TestimonialsSection,
+  CTAProfessional,
+  FooterProfessional,
+} from '@/components/design-v2/landing/landing-professional';
+import {
+  IconChat,
+  IconHeart,
+  IconCouple,
+  IconAnalysis,
+  IconBook,
+  IconTarget,
+  IconShield,
+  IconArrowRight,
+  IconSparkle,
+  IconClock,
+  IconBridge,
+  IconCheck,
+  IconUsers,
+  IconLemon,
+  IconHand,
+} from '@/components/design-v2/icons/geometric-icons';
 import '@/components/design-v2/design-v2.css';
 
-type PreviewTab = 'characters' | 'landing' | 'splash' | 'components';
+type PreviewTab = 'characters' | 'landing' | 'landing-pro' | 'splash' | 'components' | 'icons';
 
 export default function DesignPreviewPage() {
   const [activeTab, setActiveTab] = useState<PreviewTab>('characters');
@@ -14,7 +40,9 @@ export default function DesignPreviewPage() {
 
   const tabs: { id: PreviewTab; label: string }[] = [
     { id: 'characters', label: '캐릭터' },
-    { id: 'landing', label: '랜딩 페이지' },
+    { id: 'landing-pro', label: '랜딩 (Pro)' },
+    { id: 'landing', label: '랜딩 (V1)' },
+    { id: 'icons', label: '아이콘' },
     { id: 'splash', label: '스플래시' },
     { id: 'components', label: '컴포넌트' },
   ];
@@ -68,7 +96,9 @@ export default function DesignPreviewPage() {
       {/* Content */}
       <main>
         {activeTab === 'characters' && <CharactersPreview />}
+        {activeTab === 'landing-pro' && <LandingProPreview />}
         {activeTab === 'landing' && <LandingPreview />}
+        {activeTab === 'icons' && <IconsPreview />}
         {activeTab === 'splash' && <SplashPreview onShowSplash={() => setShowSplash(true)} />}
         {activeTab === 'components' && <ComponentsPreview />}
       </main>
@@ -140,6 +170,115 @@ function LandingPreview() {
       <ConceptSection />
       <FeaturesSection />
       <CTASection />
+    </div>
+  );
+}
+
+function LandingProPreview() {
+  return (
+    <div className="bg-white">
+      <HeroProfessional />
+      <PhilosophySection />
+      <FeaturesPro />
+      <SocialProofSection />
+      <TestimonialsSection />
+      <CTAProfessional />
+      <FooterProfessional />
+    </div>
+  );
+}
+
+function IconsPreview() {
+  const icons = [
+    { name: 'Chat', Icon: IconChat, desc: '대화/커뮤니케이션' },
+    { name: 'Heart', Icon: IconHeart, desc: '사랑/감정' },
+    { name: 'Couple', Icon: IconCouple, desc: '커플/관계' },
+    { name: 'Analysis', Icon: IconAnalysis, desc: '분석/차트' },
+    { name: 'Book', Icon: IconBook, desc: '라이브러리/학습' },
+    { name: 'Target', Icon: IconTarget, desc: '목표/타겟' },
+    { name: 'Shield', Icon: IconShield, desc: '보호/보안' },
+    { name: 'ArrowRight', Icon: IconArrowRight, desc: '진행/방향' },
+    { name: 'Sparkle', Icon: IconSparkle, desc: '반짝임/특별함' },
+    { name: 'Clock', Icon: IconClock, desc: '시간/일정' },
+    { name: 'Bridge', Icon: IconBridge, desc: '연결/소통' },
+    { name: 'Check', Icon: IconCheck, desc: '확인/완료' },
+    { name: 'Users', Icon: IconUsers, desc: '사용자/커뮤니티' },
+    { name: 'Lemon', Icon: IconLemon, desc: '레몬/브랜드' },
+    { name: 'Hand', Icon: IconHand, desc: '지원/도움' },
+  ];
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Geometric Icons</h2>
+        <p className="text-gray-600">기하학적이고 미니멀한 SVG 아이콘 시스템</p>
+      </div>
+
+      {/* Icon Grid */}
+      <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-5 gap-4">
+        {icons.map(({ name, Icon, desc }) => (
+          <div
+            key={name}
+            className="group p-6 bg-white rounded-2xl border border-gray-200 hover:border-[#EAB308] hover:shadow-lg transition-all text-center"
+          >
+            <div className="w-12 h-12 mx-auto mb-4 flex items-center justify-center rounded-xl bg-gray-50 group-hover:bg-[#FEF9C3] transition-colors">
+              <Icon size="lg" color="#1E293B" />
+            </div>
+            <p className="font-medium text-gray-900 text-sm mb-1">{name}</p>
+            <p className="text-xs text-gray-500">{desc}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Size Variants */}
+      <div className="mt-12">
+        <h3 className="text-xl font-bold text-gray-900 mb-6">Size Variants</h3>
+        <div className="flex items-end gap-8 p-6 bg-white rounded-2xl shadow-sm">
+          <div className="text-center">
+            <IconHeart size="sm" color="#1E293B" />
+            <p className="text-xs text-gray-500 mt-2">sm</p>
+          </div>
+          <div className="text-center">
+            <IconHeart size="md" color="#1E293B" />
+            <p className="text-xs text-gray-500 mt-2">md</p>
+          </div>
+          <div className="text-center">
+            <IconHeart size="lg" color="#1E293B" />
+            <p className="text-xs text-gray-500 mt-2">lg</p>
+          </div>
+          <div className="text-center">
+            <IconHeart size="xl" color="#1E293B" />
+            <p className="text-xs text-gray-500 mt-2">xl</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Color Variants */}
+      <div className="mt-12">
+        <h3 className="text-xl font-bold text-gray-900 mb-6">Color Variants</h3>
+        <div className="flex items-center gap-8 p-6 bg-white rounded-2xl shadow-sm">
+          <div className="text-center">
+            <IconLemon size="lg" color="#1E293B" />
+            <p className="text-xs text-gray-500 mt-2">Default</p>
+          </div>
+          <div className="text-center">
+            <IconLemon size="lg" color="#EAB308" />
+            <p className="text-xs text-gray-500 mt-2">Lemon</p>
+          </div>
+          <div className="text-center">
+            <IconLemon size="lg" color="#22C55E" />
+            <p className="text-xs text-gray-500 mt-2">Mint</p>
+          </div>
+          <div className="text-center">
+            <IconLemon size="lg" color="#F43F5E" />
+            <p className="text-xs text-gray-500 mt-2">Coral</p>
+          </div>
+          <div className="text-center">
+            <IconLemon size="lg" color="#6366F1" />
+            <p className="text-xs text-gray-500 mt-2">Indigo</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
